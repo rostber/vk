@@ -17,7 +17,7 @@ module Vk
         options[:extended] = !!options[:extended] ? 1 : 0 if options[:extended]
         options[:filter] = options[:filter].map(&:to_s).join(',') if options[:filter]
         options[:fields] = options[:fields].map(&:to_s).join(',') if options[:fields]
-        request('get', options)
+        request(:get, options)
       end
 
       def get_by_id(group_id, options = {})

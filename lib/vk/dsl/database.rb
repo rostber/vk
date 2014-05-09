@@ -40,7 +40,7 @@ module Vk
         raise 'No country_id attribute given for database.getRegions' unless options[:country_id]
         require 'vk/region'
         options[:code] = options[:code].join(',') if options[:code]
-        request_for_collection('database.getRegions', Vk::Region, options, country_id: options[:country_id])
+        request_for_collection('getRegions', Vk::Region, options, country_id: options[:country_id])
       end
 
       # Countries’ names
@@ -48,9 +48,9 @@ module Vk
       # @return [Array<Vk::Country>] array of Vk::Country
       def get_streets_by_id(street_ids)
         street_ids = Array(street_ids)
-        raise Vk::TooMuchArguments.new('database.getCountriesById', 'street_ids', 1000) if street_ids > 1000
+        raise Vk::TooMuchArguments.new('database.getStreetsById', 'street_ids', 1000) if street_ids > 1000
         require 'vk/street'
-        request('database.getCountriesById', street_ids: street_ids.join(',')).map do |street|
+        request('getStreetsById', street_ids: street_ids.join(',')).map do |street|
           Vk::Street.new(street)
         end
       end
@@ -68,7 +68,7 @@ module Vk
         city_ids = Array(city_ids)
         raise Vk::TooMuchArguments.new('database.getCitiesById', 'city_ids', 1000) if city_ids > 1000
         require 'vk/city'
-        request('database.getCitiesById', city_ids: city_ids.join(',')).map { |city| Vk::City.new(city) }
+        request('getCitiesById', city_ids: city_ids.join(',')).map { |city| Vk::City.new(city) }
       end
 
       # @return [Vk::City]
@@ -87,7 +87,7 @@ module Vk
         raise 'No country_id attribute given for database.getRegions' unless options[:country_id]
         require 'vk/city'
         options[:code] = options[:code].join(',') if options[:code]
-        request_for_collection('database.getCities', Vk::City, options, country_id: options[:country_id], region_id: options[:region_id])
+        request_for_collection('getCities', Vk::City, options, country_id: options[:country_id], region_id: options[:region_id])
       end
     end
   end
