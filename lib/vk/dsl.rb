@@ -1,10 +1,36 @@
 # coding: utf-8
 require 'vk'
-require 'vk/dsl/database'
+require 'vk/dsl/base'
+require 'active_support/core_ext/string/inflections'
 
 module Vk
   module DSL
-    include Database
+    # @return [Vk::DSL::Database]
+    def database
+      @database ||=
+        begin
+          require 'vk/dsl/database'
+          Vk::DSL::Database.new(self)
+        end
+    end
+
+    # @return [Vk::DSL::Photos]
+    def photos
+      @photos ||=
+        begin
+          require 'vk/dsl/photos'
+          Vk::DSL::Photos.new(self)
+        end
+    end
+
+    # @return [Vk::DSL::Groups]
+    def groups
+      @groups ||=
+        begin
+          require 'vk/dsl/groups'
+          Vk::DSL::Groups.new(self)
+        end
+    end
 
     # Have user installed app?
     # @param  [String] uid user’s identifier
@@ -24,7 +50,7 @@ module Vk
       if uids.first.to_i == 0
         options[:domains] = uids.join ','
       else
-        options[:uids]    = uids.join ','
+        options[:uids] = uids.join ','
       end
       options[:fields] = Array(options[:fields]).join(',') if options.key?(:fields)
       request('getProfiles', options)
@@ -32,34 +58,6 @@ module Vk
 
     def get_profile(uid, options = {})
       get_profiles(uid, options).try(:first) || {}
-    end
-
-    # Identifiers of groups in which user participates
-    # @param [Integer] user_id user’s identifier
-    # @param [Hash] options
-    # @option options [Boolean] :extended (0)
-    # @option options [<:admin, :editor, :moder, :groups, :publics, :events>] :filter
-    # @option options [<:city, :country, :place, :description, :wiki_page, :members_count, :counters, :start_date, :end_date, :can_post, :can_see_all_posts, :activity, :status, :contacts, :links, :fixed_post, :verified, :site, :can_create_topic>] :fields
-    # @option options [Fixnum] :offset
-    # @option options [Fixnum] :count
-    # @return [Array] array of group identifiers
-    def get_groups(user_id, options = {})
-      options[:user_id] = user_id
-      options[:extended] = !!options[:extended] ? 1 : 0 if options[:extended]
-      options[:filter] = options[:filter].map(&:to_s).join(',') if options[:filter]
-      options[:fields] = options[:fields].map(&:to_s).join(',') if options[:fields]
-      request('groups.get', options)
-    end
-
-    def get_group(group_id, options = {})
-      group_param = group_id.is_a?(Array) ? :group_ids : :group_id
-      options[group_param] = group_id
-      result = request('groups.getById', options)
-      if group_param == :group_id
-        result.first
-      else
-        result
-      end
     end
 
     # Friends information

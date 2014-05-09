@@ -4,38 +4,30 @@ require 'vk/exceptions'
 module Vk
   extend self
 
-  autoload :DSL,      'vk/dsl'
-  autoload :Request,  'vk/request'
-  autoload :Result,   'vk/result'
+  autoload :DSL, 'vk/dsl'
+  autoload :Client, 'vk/client'
+  autoload :Result, 'vk/result'
 
-  autoload :Base,     'vk/base'
-  autoload :User,     'vk/user'
-  autoload :City,     'vk/city'
-  autoload :Country,  'vk/country'
-  autoload :Post,     'vk/post'
-  autoload :Stats,    'vk/stats'
-  autoload :Group,    'vk/group'
+  autoload :Base, 'vk/base'
+  autoload :User, 'vk/user'
+  autoload :City, 'vk/city'
+  autoload :Country, 'vk/country'
+  autoload :Post, 'vk/post'
+  autoload :Stats, 'vk/stats'
+  autoload :Group, 'vk/group'
 
   class << self
     attr_accessor :app_id, :app_secret, :logger
   end
 
   # Request to vk.com API
-  # @return [Vk::Request] Request object
-  def request(access_token = nil)
-    @request ||= Request.new(access_token)
+  # @return [Vk::Client] Vk API client
+  def client(access_token = nil)
+    @request ||= Client.new(access_token)
   end
 
-  def log(text, severity = :debug)
-    Vk.logger.try(severity, text)
-  end
-
-  def dsl!
-    Request.dsl!
-  end
-
-  def log!
+  def verbose!(logger)
     require 'logger'
-    self.logger = Logger.new STDOUT
+    self.logger = logger || Logger.new(STDOUT)
   end
 end

@@ -11,7 +11,7 @@ require 'json'
 module Vk
   # Class for requesting vk.com api data
   # @author Alexander Semyonov
-  class Request
+  class Client
     VERSION = '5.19'
     SCHEME = 'https'
     HOST = 'api.vk.com'
@@ -28,18 +28,8 @@ module Vk
       auth_key == self.auth_key(viewer_id)
     end
 
-    def self.dsl!
-      require 'vk/dsl'
-      include Vk::DSL
-    end
-
     def initialize(access_token = nil)
       @access_token = access_token
-    end
-
-    def dsl!
-      self.class.dsl!
-      self
     end
 
     attr_accessor :access_token
